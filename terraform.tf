@@ -2,7 +2,7 @@ terraform {
 
   cloud {
     workspaces {
-      name = "jed-rearc-quest"
+      name = "jed_rearc_quest"
     }
   }
 

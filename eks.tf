@@ -12,14 +12,14 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "jed-rearc-quest"
+  cluster_name = "jed_rearc_quest"
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
 
-  name = "jed-rearc-quest-vpc"
+  name = "jed_rearc_quest-vpc"
 
   cidr = "10.0.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -60,7 +60,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     one = {
-      name = "jed-rearc-quest-1"
+      name = "jed_rearc_quest-1"
 
       instance_types = ["t3.small"]
 
