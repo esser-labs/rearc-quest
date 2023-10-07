@@ -1,3 +1,13 @@
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-2"
+}
+
+provider "aws" {
+  region = var.region
+}
+
 data "terraform_remote_state" "eks" {
   backend = "remote"
   config = {
@@ -32,9 +42,9 @@ provider "helm" {
 
 resource "helm_release" "rearc_quest" {
   name       = "rearc-quest"
-  chart      = "./helm/chart"
+  chart      = "${path.cwd}/../helm/chart"
 
   values = [
-    file("${path.module}/helm/values/aws.yaml")
+    file("${path.cwd}/../helm/values/aws.yaml")
   ]
 }

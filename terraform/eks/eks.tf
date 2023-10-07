@@ -1,3 +1,13 @@
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-2"
+}
+
+provider "aws" {
+  region = var.region
+}
+
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
