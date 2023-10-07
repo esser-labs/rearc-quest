@@ -1,10 +1,11 @@
 name: "Terraform Plan"
 
-workflow_run:
+on:
+  workflow_run:
     workflows: [Docker Build]
     types:
       - completed
-    branches:
+    branches-ignore:
       - main
 
 env:
