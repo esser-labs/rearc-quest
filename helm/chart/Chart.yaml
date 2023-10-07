@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "2.0"
+description: Generic Helm Chart for Rearc Quest
+name: "rearc-quest"
+version: 0.1.0

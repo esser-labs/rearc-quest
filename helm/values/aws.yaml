@@ -1,0 +1,51 @@
+release:
+  tag: latest
+services:
+  rearc-quest:
+    type: LoadBalancer
+    ports:
+      - port: 80
+        protocol: TCP
+        targetPort: 80
+        name: rearc-quest
+deployments:
+  rearc-quest:
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 10%
+    replicaCount: 1
+    containers:
+      rearc-quest:
+        image: johndodson85/rearc-quest:latest
+        imagePullPolicy: Always
+        command:
+          - /bin/bash
+        args:
+          - -c
+          - node src/index.js
+        containerPorts:
+          - name: rearc-quest
+            containerPort: 80
+            protocol: TCP
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1
+          httpGet:
+            scheme: HTTP
+            path: /
+            port: 80
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+          terminationGracePeriodSeconds: 30
+          httpGet:
+            scheme: HTTP
+            path: /
+            port: 80
