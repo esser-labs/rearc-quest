@@ -18,4 +18,4 @@ RUN yarn --frozen-lockfile && \
 COPY --chown=voice:voice bin ./bin
 COPY --chown=voice:voice src ./src
 
-CMD [ "node", "src/index.js" ]
+CMD [ "node", "src/000.js" ]
