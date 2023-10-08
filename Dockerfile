@@ -10,7 +10,8 @@ USER root
 RUN chown -R quest:quest /opt/app
 USER quest
 
-COPY --chown=quest:quest package.json yarn.lock
+COPY --chown=quest:quest package.json package.json
+COPY --chown=quest:quest yarn.lock yarn.lock
 
 RUN yarn --frozen-lockfile && \
     rm -rf .npmrc
