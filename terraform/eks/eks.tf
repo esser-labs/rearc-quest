@@ -4,10 +4,6 @@ variable "region" {
   default     = "us-east-2"
 }
 
-provider "aws" {
-  region = var.region
-}
-
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"

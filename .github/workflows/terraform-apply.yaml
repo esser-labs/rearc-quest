@@ -12,7 +12,7 @@ env:
   TF_CLOUD_ORGANIZATION: "EsserLabs"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "rearc-quest"
-  CONFIG_DIRECTORY: "./"
+  CONFIG_DIRECTORY: "./terraform"
 
 jobs:
   terraform:
@@ -33,34 +33,19 @@ jobs:
 
       - name: Create Apply Run EKS
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run-eks
+        id: apply-run
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
-          target: |
-            - module.eks
+          variables: |
+            - chart_root = ${{ github.workspace }}/helm
 
       - name: Apply EKS
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
         if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply-eks
+        id: apply
         with:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
-
-      - name: Create Apply Run Helm
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run-helm
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
-          target: |
-            - module.helm
-
-      - name: Apply Helm
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply-helm
-        with:
-          run: ${{ steps.apply-run.outputs.run_id }}
-          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          variables: |
+            - chart_root = ${{ github.workspace }}/helm
