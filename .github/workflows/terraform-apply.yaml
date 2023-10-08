@@ -33,19 +33,47 @@ jobs:
 
       - name: Create Apply Run EKS
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run
+        id: apply-run-eks
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
           variables: |
-            - chart_root = ${{ github.workspace }}/helm
+            chart_root = ${{ github.workspace }}/helm
+          target: |
+            eks
 
       - name: Apply EKS
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
         if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply
+        id: apply-eks
         with:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
           variables: |
-            - chart_root = ${{ github.workspace }}/helm
+            chart_root = ${{ github.workspace }}/helm
+          target: |
+            eks
+      
+      - name: Create Apply Run Helm
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: apply-run-helm
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+          variables: |
+            chart_root = ${{ github.workspace }}/helm
+          target: |
+            helm
+          
+
+      - name: Apply Helm
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        id: apply-helm
+        with:
+          run: ${{ steps.apply-run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          variables: |
+            chart_root = ${{ github.workspace }}/helm
+          target: |
+            helm
