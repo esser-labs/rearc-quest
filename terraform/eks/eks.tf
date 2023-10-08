@@ -4,6 +4,12 @@ variable "region" {
   default     = "us-east-2"
 }
 
+variable "last_run_commit" {
+  description = "Last run git commit"
+  type        = string
+  default     = "HEAD"
+}
+
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -115,4 +121,9 @@ output "region" {
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = module.eks.cluster_name
+}
+
+output "last_run_commit" {
+  description = "Last run git commit"
+  value       = var.last_run_commit
 }

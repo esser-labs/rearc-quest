@@ -7,13 +7,6 @@ on:
       - completed
     branches:
       - main
-  push:
-    branches:
-      - main
-    paths:
-      - helm/**
-      - terraform/**
-      - .github/workflows/terraform-apply.yaml
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,15 +23,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Apply EKS
-      #   uses: dflook/terraform-apply@v1
-      #   id: apply-eks
-      #   with:
-      #     auto_approve: true
-      #     path: "./terraform"
-      #     workspace: "rearc-quest"
-      #     target: |
-      #       module.eks
+      - name: Apply EKS
+        uses: dflook/terraform-apply@v1
+        id: apply-eks
+        with:
+          auto_approve: true
+          path: "./terraform"
+          workspace: "rearc-quest"
+          target: |
+            module.eks
       
       - name: Apply Helm
         uses: dflook/terraform-apply@v1
@@ -49,3 +42,5 @@ jobs:
           workspace: "rearc-quest"
           target: |
             module.helm
+          variables: |
+            last_run_commit = "${{ github.sha }}"

@@ -1,3 +1,9 @@
+variable "docker_tag" {
+  description = "docker image tag"
+  type        = string
+  default     = "latest"
+}
+
 data "terraform_remote_state" "eks" {
   backend = "remote"
   config = {
@@ -32,6 +38,11 @@ resource "helm_release" "rearc_quest" {
   chart      = "${path.module}/chart"
 
   values = [
-    file("${path.module}/values/aws.yaml")
+    file("${path.module}/values/aws.yaml"),
   ]
+
+  set {
+    name  = "deployments.rearc-quest.containers.rearc-quest.image"
+    value = "johndodson85/rearc-quest:${var.docker_tag}"
+  }
 }

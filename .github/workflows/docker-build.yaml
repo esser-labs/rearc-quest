@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - 'main'
-    paths:
-      - Dockerfile
-      - package.json
-      - yarn.lock
-      - src/**
-      - bin/**
-      - .github/workflows/docker-build.yaml
   pull_request:
 
 jobs:
@@ -34,12 +27,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rearc-quest:latest
-        if: github.ref == 'refs/heads/main'
-      -
-        name: Build
-        uses: docker/build-push-action@v5
-        with:
-          push: false
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rearc-quest:latest
-        if: github.ref != 'refs/heads/main'
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/rearc-quest:${{ github.sha }}

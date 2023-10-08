@@ -1,3 +1,9 @@
+variable "last_run_commit" {
+  description = "Last run git commit"
+  type        = string
+  default     = "HEAD"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
@@ -10,8 +16,10 @@ provider "aws" {
 
 module "eks" {
   source = "./eks"
+  last_run_commit = var.last_run_commit
 }
 
 module "helm" {
   source = "./helm"
+  docker_tag = var.last_run_commit
 }

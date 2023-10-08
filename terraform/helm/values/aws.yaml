@@ -18,7 +18,7 @@ deployments:
     containers:
       rearc-quest:
         image: johndodson85/rearc-quest:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - /bin/bash
         args:
