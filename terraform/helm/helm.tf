@@ -3,6 +3,11 @@ variable "docker_tag" {
   type        = string
   default     = "latest"
 }
+variable "cluster_name" {
+  description = "Cluster name"
+  type        = string
+  default     = "jed_rearc_quest"
+}
 
 data "terraform_remote_state" "eks" {
   backend = "remote"
@@ -15,10 +20,10 @@ data "terraform_remote_state" "eks" {
 }
 
 data "aws_eks_cluster" "cluster" {
-  name = "jed_rearc_quest"
+  name = var.cluster_name
 }
 data "aws_eks_cluster_auth" "cluster" {
-  name = "jed_rearc_quest"
+  name = var.cluster_name
 }
 
 provider "helm" {

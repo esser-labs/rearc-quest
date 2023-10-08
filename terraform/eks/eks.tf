@@ -10,6 +10,12 @@ variable "last_run_commit" {
   default     = "HEAD"
 }
 
+variable "cluster_name" {
+  description = "Cluster name"
+  type        = string
+  default     = "jed_rearc_quest"
+}
+
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -17,15 +23,17 @@ data "aws_availability_zones" "available" {
   }
 }
 
-locals {
-  cluster_name = "jed_rearc_quest"
+# Force a resource update to prevent Github action from failing when applying EKS changes and actual resources have not changed
+resource "random_string" "force_run" {
+  length  = 16
+  special = false
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
 
-  name = "jed_rearc_quest-vpc"
+  name = "${var.cluster_name}-vpc"
 
   cidr = "10.0.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -38,12 +46,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                      = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"             = 1
   }
 }
@@ -52,7 +60,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.3"
 
-  cluster_name    = local.cluster_name
+  cluster_name    = var.cluster_name
   cluster_version = "1.27"
 
   vpc_id                         = module.vpc.vpc_id
@@ -66,7 +74,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     one = {
-      name = "jed_rearc_quest-1"
+      name = "${var.cluster_name}-1"
 
       instance_types = ["t3.small"]
 

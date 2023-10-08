@@ -22,6 +22,11 @@ terraform {
       source  = "hashicorp/cloudinit"
       version = "~> 2.3.2"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5.1"
+    }
     
     tls = {
       source  = "hashicorp/tls"
