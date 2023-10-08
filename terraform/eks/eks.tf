@@ -83,6 +83,11 @@ module "eks" {
       desired_size = 2
     }
   }
+
+  tags = {
+    last_run_commit = "${var.last_run_commit}"
+    Terraform   = "true"
+  }
 }
 
 data "aws_iam_policy" "ebs_csi_policy" {

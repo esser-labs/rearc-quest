@@ -1,6 +1,13 @@
+const fs = require('fs')
+const https = require('https')
 const express = require('express')
 const app = express()
 const port = 3000
+
+const httpsOptions = {
+    key: fs.readFileSync(`${__dirname}/ssl/cert.key`),
+    cert: fs.readFileSync(`${__dirname}/ssl/cert.pem`)
+}
 
 app.get('/', function (req, res) {
 const { exec } = require('child_process');
@@ -47,4 +54,6 @@ exec('bin/006 ' + JSON.stringify(req.headers), (err, stdout, stderr) => {
 });
 });
 
-app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+const server = https.createServer(httpsOptions, app)
+
+server.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))

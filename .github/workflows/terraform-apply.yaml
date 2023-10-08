@@ -32,6 +32,8 @@ jobs:
           workspace: "rearc-quest"
           target: |
             module.eks
+          variables: |
+            last_run_commit = "${{ github.sha }}"
       
       - name: Apply Helm
         uses: dflook/terraform-apply@v1
