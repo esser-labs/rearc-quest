@@ -40,7 +40,7 @@ jobs:
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
-            eks
+            module.eks
 
       - name: Apply EKS
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
@@ -52,7 +52,7 @@ jobs:
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
-            eks
+            module.eks
       
       - name: Create Apply Run Helm
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
@@ -63,7 +63,7 @@ jobs:
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
-            helm
+            module.helm
           
 
       - name: Apply Helm
@@ -76,4 +76,4 @@ jobs:
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
-            helm
+            module.helm
