@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - 'main'
+    paths:
+      - Dockerfile
+      - package.json
+      - yarn.lock
+      - src/**
+      - bin/**
+      - .github/workflows/docker-build.yaml
   pull_request:
 
 jobs:

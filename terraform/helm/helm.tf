@@ -1,9 +1,3 @@
-variable "chart_root" {
-  description = "Helm chart root dir"
-  type        = string
-  default     = "../helm"
-}
-
 data "terraform_remote_state" "eks" {
   backend = "remote"
   config = {
@@ -15,10 +9,10 @@ data "terraform_remote_state" "eks" {
 }
 
 data "aws_eks_cluster" "cluster" {
-  name = data.terraform_remote_state.eks.outputs.cluster_name
+  name = "jed_rearc_quest"
 }
 data "aws_eks_cluster_auth" "cluster" {
-  name = data.terraform_remote_state.eks.outputs.cluster_name
+  name = "jed_rearc_quest"
 }
 
 provider "helm" {
@@ -35,9 +29,9 @@ provider "helm" {
 
 resource "helm_release" "rearc_quest" {
   name       = "rearc-quest"
-  chart      = "${var.chart_root}/chart"
+  chart      = "${path.module}/chart"
 
   values = [
-    file("${var.chart_root}/values/aws.yaml")
+    file("${path.module}/values/aws.yaml")
   ]
 }

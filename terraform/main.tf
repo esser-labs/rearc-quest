@@ -1,8 +1,3 @@
-variable "chart_root" {
-  description = "Helm chart root dir"
-  type        = string
-  default     = "../helm"
-}
 variable "region" {
   description = "AWS region"
   type        = string
