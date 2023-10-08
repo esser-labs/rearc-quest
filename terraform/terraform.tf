@@ -3,7 +3,7 @@ terraform {
   cloud {
     organization = "EsserLabs"
     workspaces {
-      name = "jed_rearc_quest"
+      name = "rearc-quest"
     }
   }
 

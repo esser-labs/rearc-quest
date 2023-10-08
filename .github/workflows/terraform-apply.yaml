@@ -9,10 +9,9 @@ on:
       - main
 
 env:
-  TF_CLOUD_ORGANIZATION: "EsserLabs"
-  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "rearc-quest"
-  CONFIG_DIRECTORY: "./terraform"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TF_API_TOKEN }}
+  TF_WORKSPACE: rearc-quest
 
 jobs:
   terraform:
@@ -24,55 +23,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
-        id: apply-upload
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ env.CONFIG_DIRECTORY }}
-
-      - name: Create Apply Run EKS
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run-eks
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
-          variables: |
-            chart_root = ${{ github.workspace }}/helm
-          target: |
-            module.eks
-
       - name: Apply EKS
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        uses: dflook/terraform-apply@v1
         id: apply-eks
         with:
-          run: ${{ steps.apply-run.outputs.run_id }}
-          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          auto_approve: true
+          path: "./terraform"
+          workspace: "rearc-quest"
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
             module.eks
       
-      - name: Create Apply Run Helm
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run-helm
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
-          variables: |
-            chart_root = ${{ github.workspace }}/helm
-          target: |
-            module.helm
-          
-
       - name: Apply Helm
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        uses: dflook/terraform-apply@v1
         id: apply-helm
         with:
-          run: ${{ steps.apply-run.outputs.run_id }}
-          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          auto_approve: true
+          path: "./terraform"
+          workspace: "rearc-quest"
           variables: |
             chart_root = ${{ github.workspace }}/helm
           target: |
