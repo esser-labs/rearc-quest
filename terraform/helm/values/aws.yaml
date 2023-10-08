@@ -23,29 +23,8 @@ deployments:
           - /bin/bash
         args:
           - -c
-          - node src/index.js
+          - node src/000.js
         containerPorts:
           - name: rearc-quest
             containerPort: 3000
             protocol: TCP
-        readinessProbe:
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 1
-          httpGet:
-            scheme: HTTP
-            path: /
-            port: 3000
-        livenessProbe:
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 3
-          terminationGracePeriodSeconds: 30
-          httpGet:
-            scheme: HTTP
-            path: /
-            port: 3000

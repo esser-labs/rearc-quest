@@ -1,22 +1,14 @@
 FROM node:18 AS user
 
-RUN groupadd --gid 10000 quest \
-    && useradd --uid 10000 --gid 10000 -m quest
-
-FROM user AS app
-
 WORKDIR /opt/app
-USER root
-RUN chown -R quest:quest /opt/app
-USER quest
 
-COPY --chown=quest:quest package.json package.json
-COPY --chown=quest:quest yarn.lock yarn.lock
+COPY package.json package.json
+COPY yarn.lock yarn.lock
 
 RUN yarn --frozen-lockfile && \
     rm -rf .npmrc
 
-COPY --chown=voice:voice bin ./bin
-COPY --chown=voice:voice src ./src
+COPY bin ./bin
+COPY src ./src
 
 CMD [ "node", "src/000.js" ]

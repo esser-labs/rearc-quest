@@ -12,11 +12,9 @@ metadata:
 {{ toYaml $deployment.annotations | indent 4 }}
 {{- end }}
   labels:
+    app: {{ $deploymentName }}
 {{- if $deployment.customLabels }}
 {{ toYaml $deployment.customLabels | indent 4 }}
-{{- else }}
-{{- if $deployment.extraLabels }}
-{{ toYaml $deployment.extraLabels | indent 4 }}
 {{- end }}
 spec:
   replicas: {{ $deployment.replicaCount }}
@@ -38,11 +36,9 @@ spec:
 {{ tpl (toYaml $deployment.podAnnotations) $root | indent 8 }}
 {{- end }}
       labels:
+        app: {{ $deploymentName }}
 {{- if $deployment.customLabels }}
 {{ toYaml $deployment.customLabels | indent 8 }}
-{{- else }}
-{{- if $deployment.extraLabels }}
-{{ toYaml $deployment.extraLabels | indent 8 }}
 {{- end }}
     spec:
 {{- if $deployment.serviceAccountName }}
