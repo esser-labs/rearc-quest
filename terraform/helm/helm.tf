@@ -26,6 +26,10 @@ data "aws_eks_cluster_auth" "cluster" {
   name = var.cluster_name
 }
 
+data "aws_acm_certificate" "cert" {
+  domain = "esserlabs.com"
+}
+
 provider "helm" {
   kubernetes {
     host                   = data.aws_eks_cluster.cluster.endpoint
@@ -49,5 +53,15 @@ resource "helm_release" "rearc_quest" {
   set {
     name  = "deployments.rearc-quest.containers.rearc-quest.image"
     value = "johndodson85/rearc-quest:${var.docker_tag}"
+  }
+
+  set {
+    name = "services.rearc-quest.annotations.service.beta.kubernetes.io/aws-load-balancer-ssl-cert"
+    value = "${data.aws_acm_certificate.cert.arn}"
+  }
+
+  set {
+    name = "services.rearc-quest.annotations.service.beta.kubernetes.io/aws-load-balancer-ssl-ports"
+    value = "443"
   }
 }

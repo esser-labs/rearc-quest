@@ -157,7 +157,9 @@ resource "aws_s3_bucket" "jed_rearc_quest" {
   }
 }
 
-resource "local_file" "docker_run_aws_json" {
+resource "aws_s3_object" "jed_rearc_quest" {
+  bucket = aws_s3_bucket.jed_rearc_quest.id
+  key    = "Dockerrun.aws.json"
   content = <<EOF
 {
   "AWSEBDockerrunVersion": "1",
@@ -172,13 +174,6 @@ resource "local_file" "docker_run_aws_json" {
   ]
 }
 EOF
-  filename = "${path.module}/${var.last_run_commit}.json"
-}
-
-resource "aws_s3_object" "jed_rearc_quest" {
-  bucket = aws_s3_bucket.jed_rearc_quest.id
-  key    = "Dockerrun.aws.json"
-  source = "${path.module}/${var.last_run_commit}.aws.json"
 }
 
 resource "aws_elastic_beanstalk_application" "jed_rearc_quest" {
@@ -204,6 +199,32 @@ resource "aws_elastic_beanstalk_environment" "jed_rearc_quest" {
     name      = "StreamLogs"
     value     = "True"
   }
+}
+
+resource "tls_private_key" "jed_rearc_quest" {
+  algorithm = "RSA"
+}
+
+resource "tls_self_signed_cert" "jed_rearc_quest" {
+  private_key_pem = tls_private_key.jed_rearc_quest.private_key_pem
+
+  subject {
+    common_name  = "esserlabs.com"
+    organization = "Esser Labs"
+  }
+
+  validity_period_hours = 168
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+resource "aws_acm_certificate" "cert" {
+  private_key      = tls_private_key.jed_rearc_quest.private_key_pem
+  certificate_body = tls_self_signed_cert.jed_rearc_quest.cert_pem
 }
 
 resource "aws_elastic_beanstalk_application_version" "jed_rearc_quest" {

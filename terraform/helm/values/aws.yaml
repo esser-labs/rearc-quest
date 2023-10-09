@@ -4,7 +4,7 @@ services:
   rearc-quest:
     type: LoadBalancer
     ports:
-      - port: 443
+      - port: 3000
         protocol: TCP
         targetPort: 3000
         name: rearc-quest
@@ -24,8 +24,6 @@ deployments:
         args:
           - -c
           - node src/000.js
-        extraVars:
-          USE_SSL: "true" 
         containerPorts:
           - name: rearc-quest
             containerPort: 3000
