@@ -1,0 +1,17 @@
+{
+  "AWSEBDockerrunVersion": "2",
+  "containerDefinitions": [
+    {
+      "name": "rearc-quest",
+      "image": "johndodson85/rearc-quest:latest",
+      "hostname": "rearc-quest",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 8000,
+          "containerPort": 3000
+        }
+      ]
+    }
+  ]
+}

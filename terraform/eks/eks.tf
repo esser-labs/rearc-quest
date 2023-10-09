@@ -16,6 +16,12 @@ variable "cluster_name" {
   default     = "jed_rearc_quest"
 }
 
+variable "elastic_name" {
+  description = "Cluster name"
+  type        = string
+  default     = "jed-rearc-quest"
+}
+
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -113,18 +119,48 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
+resource "aws_iam_role" "beanstalk_service" {
+  name = "elastic_beanstalk_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "beanstalk_log_attach" {
+  role       = aws_iam_role.beanstalk_service.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+}
+
+resource "aws_iam_instance_profile" "beanstalk_iam_instance_profile" {
+  name = "beanstalk_iam_instance_profile"
+  role = aws_iam_role.beanstalk_service.name
+}
+
 resource "aws_s3_bucket" "jed_rearc_quest" {
-  bucket = "${var.cluster_name}"
+  bucket = "${var.elastic_name}"
 
   tags = {
-    Name = "My APP EBS"
+    Name = "${var.elastic_name}"
   }
 }
 
-resource "aws_s3_bucket_object" "jed_rearc_quest" {
+resource "aws_s3_object" "jed_rearc_quest" {
   bucket = aws_s3_bucket.jed_rearc_quest.id
-  key    = "rearc.json"
-  source = "rearc.json"
+  key    = "Dockerrun.aws.json"
+  source = "${path.module}/Dockerrun.aws.json"
 }
 
 resource "aws_elastic_beanstalk_application" "jed_rearc_quest" {
@@ -133,19 +169,31 @@ resource "aws_elastic_beanstalk_application" "jed_rearc_quest" {
 }
 
 resource "aws_elastic_beanstalk_environment" "jed_rearc_quest" {
-  name         = "${var.cluster_name}"
+  name         = "${var.elastic_name}"
   application  = aws_elastic_beanstalk_application.jed_rearc_quest.name
   cname_prefix = "rearc-quest"
 
-  solution_stack_name = "64bit Amazon Linux 2 v3.1.2 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2023 v4.0.1 running Docker"
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     = aws_iam_instance_profile.beanstalk_iam_instance_profile.arn
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "StreamLogs"
+    value     = "True"
+  }
 }
 
 resource "aws_elastic_beanstalk_application_version" "jed_rearc_quest" {
-  name        = "${var.cluster_name}-version"
+  name        = "${var.elastic_name}-version"
   application = aws_elastic_beanstalk_application.jed_rearc_quest.name
   description = "application version created by terraform"
   bucket      = aws_s3_bucket.jed_rearc_quest.id
-  key         = aws_s3_bucket_object.jed_rearc_quest.id
+  key         = aws_s3_object.jed_rearc_quest.id
 }
 
 output "cluster_endpoint" {
