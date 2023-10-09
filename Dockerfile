@@ -11,4 +11,6 @@ RUN yarn --frozen-lockfile && \
 COPY bin ./bin
 COPY src ./src
 
+EXPOSE 3000
+
 CMD [ "node", "src/000.js" ]
