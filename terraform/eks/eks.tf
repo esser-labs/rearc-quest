@@ -157,6 +157,24 @@ resource "aws_s3_bucket" "jed_rearc_quest" {
   }
 }
 
+resource "local_file" "docker_run_aws_json" {
+  content = <<EOF
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "johndodson85/rearc-quest:${var.last_run_commit}",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "3000"
+    }
+  ]
+}
+EOF
+  filename = "${path.module}/Dockerrun.aws.json"
+}
+
 resource "aws_s3_object" "jed_rearc_quest" {
   bucket = aws_s3_bucket.jed_rearc_quest.id
   key    = "Dockerrun.aws.json"
@@ -189,7 +207,7 @@ resource "aws_elastic_beanstalk_environment" "jed_rearc_quest" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "jed_rearc_quest" {
-  name        = "${var.elastic_name}-version"
+  name        = "${var.elastic_name}-${var.last_run_commit}"
   application = aws_elastic_beanstalk_application.jed_rearc_quest.name
   description = "application version created by terraform"
   bucket      = aws_s3_bucket.jed_rearc_quest.id
