@@ -4,7 +4,9 @@ const port = 3000
 
 app.get('/', function (req, res) {
 const { exec } = require('child_process');
+console.log(req)
 exec('bin/001', (err, stdout, stderr) => {
+  console.log(stdout, stderr)
   if (err) {
     return res.send(`${stderr}`);
   }
@@ -36,7 +38,6 @@ exec('bin/004 ' + JSON.stringify(req.headers), (err, stdout, stderr) => {
 app.get('/tls', function (req,res) {
 const { exec } = require('child_process');
 exec('bin/005 ' + JSON.stringify(req.headers), (err, stdout, stderr) => {
-  console.log(req.headers)
   return res.send(`${stdout}`);
 });
 });
