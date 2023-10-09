@@ -54,6 +54,10 @@ exec('bin/006 ' + JSON.stringify(req.headers), (err, stdout, stderr) => {
 });
 });
 
-const server = https.createServer(httpsOptions, app)
+if (process.env.USE_SSL === 'true') {
+  const server = https.createServer(httpsOptions, app)
+  server.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+} else {
+  app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+}
 
-server.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))

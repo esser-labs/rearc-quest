@@ -24,6 +24,8 @@ deployments:
         args:
           - -c
           - node src/000.js
+        extraVars:
+          USE_SSL: "true" 
         containerPorts:
           - name: rearc-quest
             containerPort: 3000
