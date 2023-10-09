@@ -76,3 +76,7 @@ No. After interviewing, please change any solutions shared publicly to be privat
 
 ### Q. Do I have to spend money out of my own pocket to complete the quest?
 No. There are many possible solutions to this quest that would be zero cost to you when using [AWS](https://aws.amazon.com/free), [GCP](https://cloud.google.com/free), or [Azure](https://azure.microsoft.com/en-us/pricing/free-services).
+
+
+Given more time I would separate the IaC and app/Helm into separate repos with separate deployment flows. Then I wouldn't need to target specific Terraform modules and run into issues of having to force changes to apply each time for the EKS module to prevent the github action from failing.
+I had issues where when I launched this application into EKS it did not think it was running AWS or in Docker.

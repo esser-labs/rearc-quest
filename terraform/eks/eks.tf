@@ -24,9 +24,11 @@ data "aws_availability_zones" "available" {
 }
 
 # Force a resource update to prevent Github action from failing when applying EKS changes and actual resources have not changed
-resource "random_string" "force_run" {
-  length  = 16
-  special = false
+resource "random_id" "force_run" {
+  keepers = {
+    first = "${var.last_run_commit}"
+  }     
+  byte_length = 8
 }
 
 module "vpc" {
@@ -83,11 +85,6 @@ module "eks" {
       desired_size = 2
     }
   }
-
-  tags = {
-    last_run_commit = "${var.last_run_commit}"
-    Terraform   = "true"
-  }
 }
 
 data "aws_iam_policy" "ebs_csi_policy" {
@@ -114,6 +111,41 @@ resource "aws_eks_addon" "ebs-csi" {
     "eks_addon" = "ebs-csi"
     "terraform" = "true"
   }
+}
+
+resource "aws_s3_bucket" "jed_rearc_quest" {
+  bucket = "${var.cluster_name}"
+
+  tags = {
+    Name = "My APP EBS"
+  }
+}
+
+resource "aws_s3_bucket_object" "jed_rearc_quest" {
+  bucket = aws_s3_bucket.jed_rearc_quest.id
+  key    = "rearc.json"
+  source = "rearc.json"
+}
+
+resource "aws_elastic_beanstalk_application" "jed_rearc_quest" {
+  name        = "${var.cluster_name}"
+  description = "${var.cluster_name}"
+}
+
+resource "aws_elastic_beanstalk_environment" "jed_rearc_quest" {
+  name         = "${var.cluster_name}"
+  application  = aws_elastic_beanstalk_application.jed_rearc_quest.name
+  cname_prefix = "rearc-quest"
+
+  solution_stack_name = "64bit Amazon Linux 2 v3.1.2 running Docker"
+}
+
+resource "aws_elastic_beanstalk_application_version" "jed_rearc_quest" {
+  name        = "${var.cluster_name}-version"
+  application = aws_elastic_beanstalk_application.jed_rearc_quest.name
+  description = "application version created by terraform"
+  bucket      = aws_s3_bucket.jed_rearc_quest.id
+  key         = aws_s3_bucket_object.jed_rearc_quest.id
 }
 
 output "cluster_endpoint" {
