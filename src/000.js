@@ -49,5 +49,7 @@ exec('bin/006 ' + JSON.stringify(req.headers), (err, stdout, stderr) => {
 });
 });
 
-app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+server = app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`))
+server.keepAliveTimeout = 61 * 1000;
+server.headersTimeout = 65 * 1000;
 

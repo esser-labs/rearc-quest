@@ -4,10 +4,14 @@ services:
   rearc-quest:
     type: LoadBalancer
     ports:
-      - port: 3000
+      - port: 80
         protocol: TCP
         targetPort: 3000
-        name: rearc-quest
+        name: rearc-quest-http
+      - port: 443
+        protocol: TCP
+        targetPort: 3000
+        name: rearc-quest-https
 deployments:
   rearc-quest:
     strategy:
@@ -19,6 +23,8 @@ deployments:
       rearc-quest:
         image: johndodson85/rearc-quest:latest
         imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
         command:
           - /bin/bash
         args:

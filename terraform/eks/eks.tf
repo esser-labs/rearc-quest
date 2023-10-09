@@ -169,7 +169,8 @@ resource "aws_s3_object" "jed_rearc_quest" {
   },
   "Ports": [
     {
-      "ContainerPort": "3000"
+      "ContainerPort": "3000",
+      "HostPort": "3000
     }
   ]
 }
