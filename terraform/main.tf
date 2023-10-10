@@ -20,8 +20,8 @@ provider "aws" {
   region = var.region
 }
 
-module "eks" {
-  source = "./eks"
+module "aws" {
+  source = "./aws"
   cluster_name = var.cluster_name
   last_run_commit = var.last_run_commit
 }

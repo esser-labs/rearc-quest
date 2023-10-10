@@ -23,8 +23,6 @@ deployments:
       rearc-quest:
         image: johndodson85/rearc-quest:latest
         imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: true
         command:
           - /bin/bash
         args:

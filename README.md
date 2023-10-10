@@ -79,4 +79,4 @@ No. There are many possible solutions to this quest that would be zero cost to y
 
 
 Given more time I would separate the IaC and app/Helm into separate repos with separate deployment flows. Then I wouldn't need to target specific Terraform modules and run into issues of having to force changes to apply each time for the EKS module to prevent the github action from failing.
-I had issues where when I launched this application into EKS it did not think it was running AWS or in Docker. As a result I had to add an Elastic Beanstalk deployment to the Terraform in order to run it and get the secret word. I had assumed running the container in EKS with a Kubernetes services would take care of steps 1-5 in one shot. Obviously it created the ELB but the binaries did not work as I imagined they would in EKS.
+I started to move the deployment to EKS and Helm for the TLS step because I wanted to show my capabilities but I didn't have time to finish so I just used TLS through Elastic Beanstalk.
