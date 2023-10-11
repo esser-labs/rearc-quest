@@ -3,6 +3,9 @@ release:
 services:
   rearc-quest:
     type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "rearc-quest-https"
     ports:
       - port: 80
         protocol: TCP
@@ -28,6 +31,8 @@ deployments:
         args:
           - -c
           - node src/000.js
+        extraVars:
+          SECRET_WORD: TwelveFactor
         containerPorts:
           - name: rearc-quest
             containerPort: 3000
