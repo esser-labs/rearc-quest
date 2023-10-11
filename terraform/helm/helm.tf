@@ -59,9 +59,4 @@ resource "helm_release" "rearc_quest" {
     name = "services.rearc-quest.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
     value = "${data.aws_acm_certificate.cert.arn}"
   }
-
-  set {
-    name = "services.rearc-quest.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
-    value = "\"443\""
-  }
 }

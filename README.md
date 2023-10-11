@@ -78,5 +78,12 @@ No. After interviewing, please change any solutions shared publicly to be privat
 No. There are many possible solutions to this quest that would be zero cost to you when using [AWS](https://aws.amazon.com/free), [GCP](https://cloud.google.com/free), or [Azure](https://azure.microsoft.com/en-us/pricing/free-services).
 
 
-Given more time I would separate the IaC and app/Helm into separate repos with separate deployment flows. Then I wouldn't need to target specific Terraform modules and run into issues of having to force changes to apply each time for the EKS module to prevent the github action from failing.
-I started to move the deployment to EKS and Helm for the TLS step because I wanted to show my capabilities but I didn't have time to finish so I just used TLS through Elastic Beanstalk.
+Given more time I would separate the IaC and app/Helm into separate repos with separate deployment flows.
+
+I started this solution using EKS hoping that by running the container in privileged mode it would satisfy items 1, 3, and 5 immediately, not knowing how your binaries work. Unfortunately that didn't work as the do not access the underlying instance when using Docker and do not detect that they are in a Docker container when running in EKS as it is not Docker. 
+
+From there I added an Elastic Beanstalk deployment to satisfy the Docker portion.
+
+After that I added Elastic Beanstalk for Node.js to get the secret word but that also did not work. So I simply created and instance to get the secret word. That didn't work either and I realized it's because your binaries don't work with AWS Linux 2023.
+
+After that I launched an Ubuntu instance to get the secret word and wrote terraform to launch an instance running a Docker container I built with the Secrete Word as an environment variable and and ELB in front of it with a self-signed certificate set on a listner.

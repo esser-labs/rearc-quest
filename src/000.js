@@ -4,9 +4,8 @@ const port = process.env.PORT || 3000
 
 app.get('/', function (req, res) {
 const { exec } = require('child_process');
-console.log(req)
+console.log(req.headers)
 exec('bin/001', (err, stdout, stderr) => {
-  console.log(stdout, stderr)
   if (err) {
     return res.send(`${stderr}`);
   }
