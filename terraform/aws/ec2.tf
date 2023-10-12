@@ -67,8 +67,8 @@ EOF
 }
 
 resource "aws_security_group" "elb_security_group" {
-  name        = "allow_ssh_rearc"
-  description = "Allow SSH and HTTP Rearc app traffic"
+  name        = "elb_security_group"
+  description = "Quest ELB group"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
